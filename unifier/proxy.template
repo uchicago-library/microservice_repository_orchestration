@@ -1,0 +1,44 @@
+server {
+    error_log /dev/stderr warn;
+    access_log /dev/stdout;
+
+    listen ${LISTEN};
+
+    resolver 127.0.0.11 valid=${REFRESH};    
+
+    location / {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        root /www/;
+    }
+
+    location /archstor {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        proxy_pass http://archstor:${ARCHSTOR_INTERNAL_PORT}/;
+    }
+
+    location /qremis_api {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        proxy_pass http://qremis_api:${QREMIS_API_INTERNAL_PORT}/;
+    }
+
+    location /acc_idnest {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        proxy_pass http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/;
+    }
+}

@@ -1,0 +1,4 @@
+STORAGE_BACKEND = "REDIS"
+REDIS_HOST = "acc_idnest_redis"
+REDIS_PORT = 6379
+REDIS_DB = 0

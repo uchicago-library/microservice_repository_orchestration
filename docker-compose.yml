@@ -1,0 +1,87 @@
+version: '2'
+services:
+    archstor_mongo:
+        image: "mongo"
+        volumes:
+            - ${ARCHSTOR_PATH}:/data/db
+    acc_idnest_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    qremis_api_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    bunifier:
+        build:
+            context: ./unifier/
+            args:
+                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
+                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                LISTEN: "${UNIFIER_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+    unifier:
+        build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://bunifier:${UNIFIER_INTERNAL_PORT}"
+                LISTEN: "${UNIFIER_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+        ports: 
+            - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
+        depends_on:
+            - bunifier
+            - archstor
+            - qremis_api
+            - acc_idnest
+    barchstor:
+        build:
+            context: ./archstor/
+            args:
+                PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+    bacc_idnest:
+        build:
+            context: ./idnest/
+            args:
+                PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+    bqremis_api:
+        build:
+            context: ./qremis_api/
+            args:
+                PORT: "${QREMIS_API_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+    archstor:
+        build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://barchstor:${ARCHSTOR_INTERNAL_PORT}"
+                LISTEN: "${ARCHSTOR_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+    acc_idnest:
+        build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://bacc_idnest:${ACC_IDNEST_INTERNAL_PORT}"
+                LISTEN: "${ACC_IDNEST_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+    qremis_api:
+        build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://bqremis_api:${QREMIS_API_INTERNAL_PORT}"
+                LISTEN: "${QREMIS_API_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
