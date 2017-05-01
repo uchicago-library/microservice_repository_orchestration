@@ -21,6 +21,10 @@ services:
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"
                 MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - archstor
+            - qremis_api
+            - acc_idnest
     unifier:
         build:
             context: ./loadbalancer/
@@ -34,9 +38,6 @@ services:
             - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
         depends_on:
             - bunifier
-            - archstor
-            - qremis_api
-            - acc_idnest
     barchstor:
         build:
             context: ./archstor/
@@ -44,6 +45,8 @@ services:
                 PORT: "${ARCHSTOR_INTERNAL_PORT}"
                 WORKERS: "${NUM_WORKERS}"
                 TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - archstor_mongo
     bacc_idnest:
         build:
             context: ./idnest/
@@ -51,6 +54,8 @@ services:
                 PORT: "${ACC_IDNEST_INTERNAL_PORT}"
                 WORKERS: "${NUM_WORKERS}"
                 TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - acc_idnest_redis
     bqremis_api:
         build:
             context: ./qremis_api/
@@ -58,6 +63,8 @@ services:
                 PORT: "${QREMIS_API_INTERNAL_PORT}"
                 WORKERS: "${NUM_WORKERS}"
                 TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - qremis_api_redis
     archstor:
         build:
             context: ./loadbalancer/
@@ -67,6 +74,8 @@ services:
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"
                 MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - barchstor
     acc_idnest:
         build:
             context: ./loadbalancer/
@@ -76,6 +85,8 @@ services:
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"
                 MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - bacc_idnest
     qremis_api:
         build:
             context: ./loadbalancer/
@@ -85,3 +96,5 @@ services:
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"
                 MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - bqremis_api
