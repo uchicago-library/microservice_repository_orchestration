@@ -10,6 +10,24 @@ services:
     qremis_api_redis:
         image: "redis"
         entrypoint: "redis-server --appendonly yes"
+    dead_simple_interface:
+        build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://bdead_simple_interface:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                LISTEN: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - bdead_simple_interface
+    bdead_simple_interface:
+        build:
+            context: ./microservice_repository_dead_simple_interface/
+            args:
+                PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
     bunifier:
         build:
             context: ./unifier/
@@ -17,6 +35,7 @@ services:
                 ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
                 QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
                 ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
                 LISTEN: "${UNIFIER_INTERNAL_PORT}"
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"

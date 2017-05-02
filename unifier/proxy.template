@@ -22,6 +22,7 @@ server {
         send_timeout                ${TIMEOUT};
         client_max_body_size ${MAX_FSIZE};
         proxy_pass http://archstor:${ARCHSTOR_INTERNAL_PORT}/;
+        proxy_redirect default;
     }
 
     location /qremis_api {
@@ -40,5 +41,14 @@ server {
         send_timeout                ${TIMEOUT};
         client_max_body_size ${MAX_FSIZE};
         proxy_pass http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/;
+    }
+
+    location /dead_simple_interface {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        proxy_pass http://dead_simple_interface:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}/;
     }
 }
