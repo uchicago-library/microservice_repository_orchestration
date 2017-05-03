@@ -19,5 +19,3 @@ ENV DEAD_SIMPLE_INTERFACE_INTERNAL_PORT=$DEAD_SIMPLE_INTERFACE_INTERNAL_PORT
 RUN rm /etc/nginx/conf.d/*
 COPY proxy.template /etc/nginx/conf.d/
 RUN envsubst '$$DEAD_SIMPLE_INTERFACE_INTERNAL_PORT $$ARCHSTOR_INTERNAL_PORT $$QREMIS_API_INTERNAL_PORT $$ACC_IDNEST_INTERNAL_PORT $$LISTEN $$REFRESH $$TIMEOUT $$MAX_FSIZE' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/proxy.conf
-RUN mkdir /www/
-COPY www/ /www/
