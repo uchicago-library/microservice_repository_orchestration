@@ -43,4 +43,12 @@ server {
         proxy_pass http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/;
     }
 
+    location /collrecs {
+        proxy_connect_timeout       ${TIMEOUT};
+        proxy_send_timeout          ${TIMEOUT};
+        proxy_read_timeout          ${TIMEOUT};
+        send_timeout                ${TIMEOUT};
+        client_max_body_size ${MAX_FSIZE};
+        proxy_pass http://records_api:${REC_API_INTERNAL_PORT}/;
+    }
 }

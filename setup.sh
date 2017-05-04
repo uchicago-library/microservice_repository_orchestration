@@ -14,4 +14,6 @@ git clone https://github.com/bnbalsamo/qremis_api.git && \
     cp ./configs/qremis_api_conf.py qremis_api/config.py
 git clone https://github.com/bnbalsamo/microservice_repository_dead_simple_interface.git && \
     cp ./configs/dead_simple_interface_conf.py microservice_repository_dead_simple_interface/config.py
+git clone https://github.com/bnbalsamo/demo_records_api.git && \
+    cp ./configs/demo_records_api_conf.py demo_records_api/config.py
 for x in $DIR/configs/*.template; do rm `echo $x | rev | cut -c 10- | rev`.py; done

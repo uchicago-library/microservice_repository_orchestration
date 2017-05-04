@@ -4,12 +4,25 @@ services:
         image: "mongo"
         volumes:
             - ${ARCHSTOR_PATH}:/data/db
+    rec_mongo:
+        image: "mongo"
+        volumes: 
+            - ${REC_PATH}:/data/db
     acc_idnest_redis:
         image: "redis"
         entrypoint: "redis-server --appendonly yes"
     qremis_api_redis:
         image: "redis"
         entrypoint: "redis-server --appendonly yes"
+    records_api:
+        build:
+            context: ./demo_records_api/
+            args:
+                PORT: "${REC_API_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - rec_mongo
     dead_simple_interface:
         build:
             context: ./loadbalancer/
@@ -36,6 +49,7 @@ services:
                 QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
                 ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
                 DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
                 LISTEN: "${UNIFIER_INTERNAL_PORT}"
                 REFRESH: "${REFRESH}"
                 TIMEOUT: "${TIMEOUT}"
@@ -44,6 +58,7 @@ services:
             - archstor
             - qremis_api
             - acc_idnest
+            - records_api
     unifier:
         build:
             context: ./loadbalancer/
