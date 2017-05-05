@@ -23,7 +23,6 @@ server {
         send_timeout                ${TIMEOUT};
         client_max_body_size ${MAX_FSIZE};
         proxy_pass http://archstor:${ARCHSTOR_INTERNAL_PORT}/;
-        proxy_redirect default;
     }
 
     location /qremis_api {
