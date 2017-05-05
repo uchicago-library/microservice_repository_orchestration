@@ -5,6 +5,7 @@ server {
     listen ${LISTEN};
 
     resolver 127.0.0.11 valid=${REFRESH};    
+    proxy_hide_header Location;
 
     location / {
         proxy_connect_timeout       ${TIMEOUT};
