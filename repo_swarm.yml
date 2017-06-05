@@ -26,6 +26,8 @@ services:
                 TIMEOUT: "${TIMEOUT}"
         depends_on:
             - rec_mongo
+        ports: 
+            - "${REC_API_EXTERNAL_PORT}:${REC_API_INTERFACE_INTERNAL_PORT}"
     dead_simple_interface:
         image: ${REGISTRY-127.0.0.1:5000}/dead_simple_interface:${TAG-latest}
         build:
@@ -34,27 +36,8 @@ services:
                 PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
                 WORKERS: "${NUM_WORKERS}"
                 TIMEOUT: "${TIMEOUT}"
-    unifier:
-        image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
-        build:
-            context: ./unifier/
-            args:
-                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
-                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
-                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
-                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
-                LISTEN: "${UNIFIER_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
-        depends_on:
-            - archstor
-            - qremis_api
-            - acc_idnest
-            - records_api
         ports: 
-            - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
+            - "${DEAD_SIMPLE_INTERFACE_EXTERNAL_PORT}:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
     archstor:
         image: ${REGISTRY-127.0.0.1:5000}/archstor:${TAG-latest}
         build:
@@ -65,6 +48,8 @@ services:
                 TIMEOUT: "${TIMEOUT}"
         depends_on:
             - archstor_mongo
+        ports: 
+            - "${ARCHSTOR_EXTERNAL_PORT}:${ARCHSTOR_INTERNAL_PORT}"
     acc_idnest:
         image: ${REGISTRY-127.0.0.1:5000}/acc_idnest:${TAG-latest}
         build:
@@ -75,6 +60,8 @@ services:
                 TIMEOUT: "${TIMEOUT}"
         depends_on:
             - acc_idnest_redis
+        ports: 
+            - "${ACC_IDNEST_EXTERNAL_PORT}:${ACC_IDNEST_INTERNAL_PORT}"
     qremis_api:
         image: ${REGISTRY-127.0.0.1:5000}/qremis_api:${TAG-latest}
         build:
@@ -83,6 +70,8 @@ services:
                 PORT: "${QREMIS_API_INTERNAL_PORT}"
                 WORKERS: "${NUM_WORKERS}"
                 TIMEOUT: "${TIMEOUT}"
+        ports: 
+            - "${QREMIS_API_EXTERNAL_PORT}:${QREMIS_API_INTERNAL_PORT}"
         depends_on:
             - qremis_api_redis
             - qremis_api_mongo
