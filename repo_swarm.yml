@@ -27,7 +27,7 @@ services:
         depends_on:
             - rec_mongo
         ports: 
-            - "${REC_API_EXTERNAL_PORT}:${REC_API_INTERFACE_INTERNAL_PORT}"
+            - "${REC_API_EXTERNAL_PORT}:${REC_API_INTERNAL_PORT}"
     dead_simple_interface:
         image: ${REGISTRY-127.0.0.1:5000}/dead_simple_interface:${TAG-latest}
         build:
