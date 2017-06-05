@@ -1,0 +1,88 @@
+version: '3'
+# NOTE: This swarm config defines mongo/redis instances for storage
+# _inside of the swarm itself_ with no specified volumes. aka none of this
+# data is actually persistent. It also includes nearly all of the options
+# for supported storage backends from the various projects.
+services:
+    archstor_mongo:
+        image: "mongo"
+    rec_mongo:
+        image: "mongo"
+    qremis_api_mongo:
+        image: "mongo"
+    acc_idnest_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    qremis_api_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    records_api:
+        image: ${REGISTRY-127.0.0.1:5000}/records_api:${TAG-latest}
+        build:
+            context: ./demo_records_api/
+            args:
+                PORT: "${REC_API_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - rec_mongo
+    dead_simple_interface:
+        image: ${REGISTRY-127.0.0.1:5000}/dead_simple_interface:${TAG-latest}
+        build:
+            context: ./microservice_repository_dead_simple_interface/
+            args:
+                PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+    unifier:
+        image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
+        build:
+            context: ./unifier/
+            args:
+                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
+                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
+                LISTEN: "${UNIFIER_INTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - archstor
+            - qremis_api
+            - acc_idnest
+            - records_api
+        ports: 
+            - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
+    archstor:
+        image: ${REGISTRY-127.0.0.1:5000}/archstor:${TAG-latest}
+        build:
+            context: ./archstor/
+            args:
+                PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - archstor_mongo
+    acc_idnest:
+        image: ${REGISTRY-127.0.0.1:5000}/acc_idnest:${TAG-latest}
+        build:
+            context: ./idnest/
+            args:
+                PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - acc_idnest_redis
+    qremis_api:
+        image: ${REGISTRY-127.0.0.1:5000}/qremis_api:${TAG-latest}
+        build:
+            context: ./qremis_api/
+            args:
+                PORT: "${QREMIS_API_INTERNAL_PORT}"
+                WORKERS: "${NUM_WORKERS}"
+                TIMEOUT: "${TIMEOUT}"
+        depends_on:
+            - qremis_api_redis
+            - qremis_api_mongo
