@@ -48,8 +48,12 @@ $ cd microservice_repository_orchestration
 $ ./clone_repos.sh
 ```
 
-5. Edit Settinngs in the swarm_env_vars.env File
+5. Edit Settings in the swarm_env_vars.env File
 **!! NOTE: These files are going to get sourced in later scripts. !!**
+Use whatever editor you like, the files are plaintext. Nano example provided:
+```
+$ nano swarm_env_vars.env
+```
 
 6. Build/Insert the Configuration Files
 ```
@@ -98,8 +102,12 @@ $ cd microservice_repository_orchestration
 $ ./clone_repos.sh
 ```
 
-4. Edit Settinngs in the compose_env_vars.env File
+4. Edit Settings in the compose_env_vars.env File
 **!! NOTE: These files are going to get sourced in later scripts. !!**
+Use whatever editor you like, the files are plaintext. Nano example provided:
+```
+$ nano compose_env_vars.env
+```
 
 5. Build/Insert the Configuration Files
 ```
