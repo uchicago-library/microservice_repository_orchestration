@@ -13,25 +13,22 @@ It relies on the following projects:
 The [accutil](https://github.com/bnbalsamo/qremis_accutil) is built to ingest files into the microservice systems.
 
 # Swarm Setup Instructions
-> This assumes you have your swarm configured,
-> and are ssh'd into a manager node to run
-> commands from. Configuration relies on the
-> envsubst command, part of the gettext package.
-> It must be installed on your manager node
-> (or where-ever you're building from)
-> To do this in boot2docker: 
-> tce-load -wi gettext.tcz
+## Prerequisites/Notes
+- This assumes you have your swarm configured, and are ssh'd into a manager node to run commands from. A basic tutorial utilizing docker-machine can be found [here](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/)
+- Configuration relies on the envsubst command, part of the gettext package. It must be installed on your manager node (or where ever you're building from) To do this in boot2docker: tce-load -wi gettext.tcz
+- Setup also requires docker-compose, installation instructions for various platforms [here](https://docs.docker.com/compose/install/)
+    - If using a docker-machine swarm the sudo -i edge case is required.
 
 0. Optional: Configure Swarm Visualizer
-> If you'd like to have the swarm visualizer
-> for pretty graphics running at $SWARM_HOST:8080
+If you'd like to have the swarm visualizer
+for pretty graphics running at $SWARM_HOST:8080
 ```
 $ docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
 ```
 
 1. Configure the Registry
-> Manually fire up a docker image registry. If you already have a registry,
-> instead set the $REGISTRY environmental variable.
+Manually fire up a docker image registry. If you already have a registry,
+instead set the $REGISTRY environmental variable.
 ```
 $ docker service create --name registry --publish 5000:5000 registry:2
 ```
@@ -52,7 +49,7 @@ $ ./clone_repos.sh
 ```
 
 5. Edit Settinngs in the swarm_env_vars.env File
-> !! NOTE: These files are going to get sourced in later scripts. !!
+**!! NOTE: These files are going to get sourced in later scripts. !!**
 
 6. Build/Insert the Configuration Files
 ```
@@ -78,17 +75,13 @@ $ docker-compose -f swarm_stack.yml push
 ```
 $ docker stack deploy --compose-file swarm_stack.yml repository_swarm
 ```
-> You should now be able to navigate to $SWARM_HOST and see the interface
+You should now be able to navigate to $SWARM_HOST and see the interface
 
 # Compose Setup Instructions
-> NOTE: If your sh doesn't support source you may have to run
-> the sh scripts with bash manually
-> Configuration relies on the
-> envsubst command, part of the gettext package.
-> It must be installed on your manager node
-> (or where-ever you're building from)
-> To do this in boot2docker: 
-> tce-load -wi gettext.tcz
+## Prerequisites/Notes
+- If your sh doesn't support source you may have to run the sh scripts with bash manually
+- Configuration relies on the envsubst command, part of the gettext package. It must be installed on your manager node (or where-ever you're building from) To do this in boot2docker: tce-load -wi gettext.tcz
+- Setup also requires docker-compose, installation instructions for various platforms [here](https://docs.docker.com/compose/install/)
 
 1. Clone the Git Repository
 ```
@@ -106,7 +99,7 @@ $ ./clone_repos.sh
 ```
 
 4. Edit Settinngs in the compose_env_vars.env File
-> !! NOTE: These files are going to get sourced in later scripts. !!
+**!! NOTE: These files are going to get sourced in later scripts. !!**
 
 5. Build/Insert the Configuration Files
 ```
@@ -127,5 +120,5 @@ $ docker-compose -f docker-compose.yml build
 ```
 $ docker-compose -f docker-compose.yml up
 ```
-> You should now be able to navigate to $UNIFIER_HOST:$UNIFIER_EXTERNAL_PORT
-> and see the interface 
+You should now be able to navigate to $UNIFIER_HOST:$UNIFIER_EXTERNAL_PORT
+and see the interface 
