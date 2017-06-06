@@ -16,7 +16,10 @@ The [accutil](https://github.com/bnbalsamo/qremis_accutil) is built to ingest fi
 ```
 # This assumes you have your swarm configured,
 # and are ssh'd into a manager node to run
-# commands from.
+# commands from. Configuration relies on the
+# envsubst command, part of the gettext package.
+# It must be installed on your manager node
+# (or where-ever you're building from)
 
 # If you'd like to have the swarm visualizer
 # for pretty graphics running at $SWARM_HOST:8080
@@ -27,13 +30,19 @@ $ docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock do
 
 $ docker service create --name registry --publish 5000:5000 registry:2
 
-# ALL THE FOLLOWING COMMANDS MUST BE RUN FROM THE GIT REPO ROOT
+# Clone the git repo
+$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
+
+# cd into the repository root
+$ cd microservice_repository_orchestration
+
+# !! ALL THE FOLLOWING COMMANDS MUST BE RUN FROM THE GIT REPO ROOT !!
 
 # Clone the relevant repos
 $ ./clone_repos.sh
 
 # Edit any relevant settinngs in the swarm_env_vars.env
-# NOTE: These files are going to get sourced in later scripts.
+# !! NOTE: These files are going to get sourced in later scripts. !!
 
 # Build our configs and put them in place
 $ ./build_swarm_configs.sh
