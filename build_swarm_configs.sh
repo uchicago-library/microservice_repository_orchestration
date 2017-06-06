@@ -18,7 +18,7 @@ for x in ./configs/*; do envsubst < $x > `echo $x | rev | cut -c 10- | rev`.py; 
 cp ./configs/archstor_conf.py archstor/config.py
 cp ./configs/qremis_api_conf.py qremis_api/config.py
 cp ./configs/dead_simple_interface_conf.py microservice_repository_dead_simple_interface/config.py
-cp ./configs/dead_simple_interface_conf.py microservice_repository_dead_simple_interface/config.py
+cp ./configs/acc_idnest_conf.py idnest/config.py
 cp ./configs/demo_records_api_conf.py demo_records_api/config.py
 
 for x in ./configs/*.template; do rm `echo $x | rev | cut -c 10- | rev`.py; done
