@@ -12,52 +12,112 @@ It relies on the following projects:
 
 The [accutil](https://github.com/bnbalsamo/qremis_accutil) is built to ingest files into the microservice systems.
 
-# Swarm setup instructions
-```
-# This assumes you have your swarm configured,
-# and are ssh'd into a manager node to run
-# commands from. Configuration relies on the
-# envsubst command, part of the gettext package.
-# It must be installed on your manager node
-# (or where-ever you're building from)
+# Swarm Setup Instructions
+> This assumes you have your swarm configured,
+> and are ssh'd into a manager node to run
+> commands from. Configuration relies on the
+> envsubst command, part of the gettext package.
+> It must be installed on your manager node
+> (or where-ever you're building from)
 
-# If you'd like to have the swarm visualizer
-# for pretty graphics running at $SWARM_HOST:8080
+0. Optional: Configure Swarm Visualizer
+> If you'd like to have the swarm visualizer
+> for pretty graphics running at $SWARM_HOST:8080
+```
 $ docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
-
-# Manually fire up our registry. If you already have a registry,
-# instead set the $REGISTRY environmental variable here.
-
-$ docker service create --name registry --publish 5000:5000 registry:2
-
-# Clone the git repo
-$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
-
-# cd into the repository root
-$ cd microservice_repository_orchestration
-
-# !! ALL THE FOLLOWING COMMANDS MUST BE RUN FROM THE GIT REPO ROOT !!
-
-# Clone the relevant repos
-$ ./clone_repos.sh
-
-# Edit any relevant settinngs in the swarm_env_vars.env
-# !! NOTE: These files are going to get sourced in later scripts. !!
-
-# Build our configs and put them in place
-$ ./build_swarm_configs.sh
-
-# Build the yml for docker compose
-$ ./build_swarm_yml.sh
-
-# Build our container images
-$ docker-compose -f swarm_stack.yml build
-
-# Push the built images to the docker repository
-$ docker-compose -f swarm_stack.yml push
-
-# Deploy the services to the swarm
-$ docker stack deploy --compose-file swarm_stack.yml repository_swarm
-
-# You should now be able to navigate to $SWARM_HOST and see the interface
 ```
+
+1. Configure the Registry
+> Manually fire up a docker image registry. If you already have a registry,
+> instead set the $REGISTRY environmental variable.
+```
+$ docker service create --name registry --publish 5000:5000 registry:2
+```
+
+2. Clone the Git Repository
+```
+$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
+```
+
+3. Navigate into the Repository Root
+```
+$ cd microservice_repository_orchestration
+```
+
+4. Clone the Other Relevant Git Repositories
+```
+$ ./clone_repos.sh
+```
+
+5. Edit Settinngs in the swarm_env_vars.env File
+> !! NOTE: These files are going to get sourced in later scripts. !!
+
+6. Build/Insert the Configuration Files
+```
+$ ./build_swarm_configs.sh
+```
+
+7. Build the YML for Docker Compose
+```
+$ ./build_swarm_yml.sh
+```
+
+8. Build the Container Images
+```
+$ docker-compose -f swarm_stack.yml build
+```
+
+9. Push the Built Images to the Docker Repository
+```
+$ docker-compose -f swarm_stack.yml push
+```
+
+10. Deploy the Services to the Swarm
+```
+$ docker stack deploy --compose-file swarm_stack.yml repository_swarm
+```
+> You should now be able to navigate to $SWARM_HOST and see the interface
+
+# Compose Setup Instructions
+> NOTE: If your sh doesn't support source you may have to run
+> the sh scripts with bash manually
+
+1. Clone the Git Repository
+```
+$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
+```
+
+2. Navigate into the Repository Root
+```
+$ cd microservice_repository_orchestration
+```
+
+3. Clone the Other Relevant Git Repositories
+```
+$ ./clone_repos.sh
+```
+
+4. Edit Settinngs in the compose_env_vars.env File
+> !! NOTE: These files are going to get sourced in later scripts. !!
+
+5. Build/Insert the Configuration Files
+```
+$ ./build_compose_configs.sh
+```
+
+6. Build the YML for Docker Compose
+```
+$ ./build_compose_yml.sh
+```
+
+7. Build the Container Images
+```
+$ docker-compose -f docker-compose.yml build
+```
+
+8. Start the containers
+```
+$ docker-compose -f docker-compose.yml up
+```
+> You should now be able to navigate to $UNIFIER_HOST:$UNIFIER_EXTERNAL_PORT
+> and see the interface 
