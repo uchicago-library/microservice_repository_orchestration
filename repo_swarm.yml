@@ -92,6 +92,6 @@ services:
             - archstor
             - qremis_api
             - acc_idnest
-	    - records_api
+            - records_api
         ports: 
             - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
