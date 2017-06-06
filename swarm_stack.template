@@ -1,4 +1,4 @@
-version: '3'
+version: "3.0"
 # NOTE: This swarm config defines mongo/redis instances for storage
 # _inside of the swarm itself_ with no specified volumes. aka none of this
 # data is actually persistent. It also includes nearly all of the options
@@ -76,6 +76,7 @@ services:
             - qremis_api_redis
             - qremis_api_mongo
     unifier:
+        image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
         build:
             context: ./unifier/
             args:

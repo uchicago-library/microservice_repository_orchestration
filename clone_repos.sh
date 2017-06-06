@@ -1,8 +1,6 @@
 #! /bin/sh
 
 # Clone the repos into this dir
-# If these error because they already exist thats fine, 
-# assume we just want to refresh our configs
 git clone https://github.com/bnbalsamo/archstor.git
 git clone https://github.com/uchicago-library/idnest.git
 git clone https://github.com/bnbalsamo/qremis_api.git
