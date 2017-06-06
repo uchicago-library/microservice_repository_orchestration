@@ -19,6 +19,8 @@ The [accutil](https://github.com/bnbalsamo/qremis_accutil) is built to ingest fi
 > envsubst command, part of the gettext package.
 > It must be installed on your manager node
 > (or where-ever you're building from)
+> To do this in boot2docker: 
+> tce-load -wi gettext.tcz
 
 0. Optional: Configure Swarm Visualizer
 > If you'd like to have the swarm visualizer
@@ -81,6 +83,12 @@ $ docker stack deploy --compose-file swarm_stack.yml repository_swarm
 # Compose Setup Instructions
 > NOTE: If your sh doesn't support source you may have to run
 > the sh scripts with bash manually
+> Configuration relies on the
+> envsubst command, part of the gettext package.
+> It must be installed on your manager node
+> (or where-ever you're building from)
+> To do this in boot2docker: 
+> tce-load -wi gettext.tcz
 
 1. Clone the Git Repository
 ```
