@@ -75,3 +75,23 @@ services:
         depends_on:
             - qremis_api_redis
             - qremis_api_mongo
+    unifier:
+        build:
+            context: ./unifier/
+            args:
+                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
+                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
+                LISTEN: "${UNIFIER_EXTERNAL_PORT}"
+                REFRESH: "${REFRESH}"
+                TIMEOUT: "${TIMEOUT}"
+                MAX_FSIZE: "${MAX_FSIZE}"
+        depends_on:
+            - archstor
+            - qremis_api
+            - acc_idnest
+	    - records_api
+        ports: 
+            - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
