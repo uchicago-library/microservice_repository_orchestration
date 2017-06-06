@@ -1,6 +1,6 @@
 This repository contains the necessary files to spin up the core microservices for an archival digital repository.
 
-These microservices are still in varying stages of development, changes my occur without warning.
+These microservices are still in varying stages of development, changes may occur without warning.
 
 It relies on the following projects:
 
