@@ -50,6 +50,7 @@ $ ./clone_repos.sh
 
 5. Edit Settings in the swarm_env_vars.env File
      - **!! NOTE: These files are going to get sourced in later scripts. !!**
+
 Use whatever editor you like, the files are plaintext. Nano example provided:
 ```
 $ nano swarm_env_vars.env
@@ -104,6 +105,7 @@ $ ./clone_repos.sh
 
 4. Edit Settings in the compose_env_vars.env File
     - **!! NOTE: These files are going to get sourced in later scripts. !!**
+
 Use whatever editor you like, the files are plaintext. Nano example provided:
 ```
 $ nano compose_env_vars.env
