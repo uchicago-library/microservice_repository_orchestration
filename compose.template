@@ -16,11 +16,27 @@ services:
         entrypoint: "redis-server --appendonly yes"
     records_api:
         build:
+            context: ./loadbalancer/
+            args:
+                UPSTREAM: "http://brecords_api:${REC_API_INTERNAL_PORT}"
+                LISTEN: "${REC_API_INTERNAL_PORT}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        depends_on:
+            - brecords_api
+    brecords_api:
+        build:
             context: ./demo_records_api/
             args:
                 PORT: "${REC_API_INTERNAL_PORT}"
-                WORKERS: "${NUM_WORKERS}"
-                TIMEOUT: "${TIMEOUT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${REC_API_SECRET_KEY}"
+                VERBOSITY: "${REC_API_VERBOSITY}"
+                MONGO_HOST: "rec_mongo"
+                MONGO_PORT: "27017"
+                MONGO_DB: "${REC_API_MONGO_DB}"
         depends_on:
             - rec_mongo
     dead_simple_interface:
@@ -29,9 +45,9 @@ services:
             args:
                 UPSTREAM: "http://bdead_simple_interface:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
                 LISTEN: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bdead_simple_interface
     bdead_simple_interface:
@@ -39,8 +55,15 @@ services:
             context: ./microservice_repository_dead_simple_interface/
             args:
                 PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                WORKERS: "${NUM_WORKERS}"
-                TIMEOUT: "${TIMEOUT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${DEAD_SIMPLE_INTERFACE_SECRET_KEY}"
+                VERBOSITY: "${DEAD_SIMPLE_INTERFACE_VERBOSITY}"
+                INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
+                INTERNAL_QREMIS_API_URL: "http://qremis_api:${QREMIS_API_INTERNAL_PORT}/"
+                INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
+                EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
+                EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
     bunifier:
         build:
             context: ./unifier/
@@ -50,10 +73,10 @@ services:
                 ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
                 DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
                 REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
-                LISTEN: "${UNIFIER_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                LISTEN: "${UNIFIER_EXTERNAL_PORT}"
+                REFRESH: "${UNIFIER_REFRESH}"
+                TIMEOUT: "${UNIFIER_TIMEOUT}"
+                MAX_FSIZE: "${UNIFIER_MAX_FSIZE}"
         depends_on:
             - archstor
             - qremis_api
@@ -65,9 +88,9 @@ services:
             args:
                 UPSTREAM: "http://bunifier:${UNIFIER_INTERNAL_PORT}"
                 LISTEN: "${UNIFIER_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         ports: 
             - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
         depends_on:
@@ -77,8 +100,21 @@ services:
             context: ./archstor/
             args:
                 PORT: "${ARCHSTOR_INTERNAL_PORT}"
-                WORKERS: "${NUM_WORKERS}"
-                TIMEOUT: "${TIMEOUT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${ARCHSTOR_SECRET_KEY}"
+                VERBOSITY: "${ARCHSTOR_VERBOSITY}"
+                STORAGE_BACKEND: "${ARCHSTOR_STORAGE_BACKEND}"
+                MONGO_HOST: "archstor_mongo"
+                MONGO_PORT: "27017"
+                MONGO_DB: "${ARCHSTOR_MONGO_DB}"
+                SWIFT_AUTH_URL: "${ARCHSTOR_SWIFT_AUTH_URL}"
+                SWIFT_AUTH_VERSION: "${ARCHSTOR_SWIFT_AUTH_VERSION}"
+                SWIFT_USER: "${ARCHSTOR_SWIFT_USER}"
+                SWIFT_KEY: "${ARCHSTOR_SWIFT_KEY}"
+                SWIFT_TENANT_NAME: "${ARCHSTOR_SWIFT_TENANT_NAME}"
+                SWIFT_CONTAINER_NAME: "${ARCHSTOR_SWIFT_CONTAINER_NAME}"
+                SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
         depends_on:
             - archstor_mongo
     bacc_idnest:
@@ -86,8 +122,17 @@ services:
             context: ./idnest/
             args:
                 PORT: "${ACC_IDNEST_INTERNAL_PORT}"
-                WORKERS: "${NUM_WORKERS}"
-                TIMEOUT: "${TIMEOUT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
+                VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
+                STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"
+                MONGO_HOST: "${ACC_IDNEST_MONGO_HOST}"
+                MONGO_PORT: "${ACC_IDNEST_MONGO_PORT}"
+                MONGO_DB: "${ACC_IDNEST_MONGO_DB}"
+                REDIS_HOST: "acc_idnest_redis"
+                REDIS_PORT: "6379"
+                REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
         depends_on:
             - acc_idnest_redis
     bqremis_api:
@@ -95,8 +140,17 @@ services:
             context: ./qremis_api/
             args:
                 PORT: "${QREMIS_API_INTERNAL_PORT}"
-                WORKERS: "${NUM_WORKERS}"
-                TIMEOUT: "${TIMEOUT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${QREMIS_API_SECRET_KEY}"
+                VERBOSITY: "${QREMIS_API_VERBOSITY}"
+                STORAGE_BACKEND: "${QREMIS_API_STORAGE_BACKEND}"
+                MONGO_HOST: "${QREMIS_API_MONGO_HOST}"
+                MONGO_PORT: "${QREMIS_API_MONGO_PORT}"
+                MONGO_DBNAME: "${QREMIS_API_MONGO_DBNAME}"
+                REDIS_HOST: "qremis_api_redis"
+                REDIS_PORT: "6379"
+                REDIS_DB: "${QREMIS_API_REDIS_DB}"
         depends_on:
             - qremis_api_redis
     archstor:
@@ -105,9 +159,9 @@ services:
             args:
                 UPSTREAM: "http://barchstor:${ARCHSTOR_INTERNAL_PORT}"
                 LISTEN: "${ARCHSTOR_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - barchstor
     acc_idnest:
@@ -116,9 +170,9 @@ services:
             args:
                 UPSTREAM: "http://bacc_idnest:${ACC_IDNEST_INTERNAL_PORT}"
                 LISTEN: "${ACC_IDNEST_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bacc_idnest
     qremis_api:
@@ -127,8 +181,8 @@ services:
             args:
                 UPSTREAM: "http://bqremis_api:${QREMIS_API_INTERNAL_PORT}"
                 LISTEN: "${QREMIS_API_INTERNAL_PORT}"
-                REFRESH: "${REFRESH}"
-                TIMEOUT: "${TIMEOUT}"
-                MAX_FSIZE: "${MAX_FSIZE}"
+                REFRESH: "${NGINX_REFRESH}"
+                TIMEOUT: "${NGINX_TIMEOUT}"
+                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bqremis_api
