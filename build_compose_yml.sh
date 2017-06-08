@@ -1,23 +1,4 @@
 #!/bin/sh
-
-source compose_env_vars.env
-
-export \
-  UNIFIER_HOST \
-  UNIFIER_EXTERNAL_PORT \
-  EXTERNAL_ARCHSTOR_URL \
-  EXTERNAL_QREMIS_API_URL \
-  ARCHSTOR_PATH \
-  REC_PATH \
-  REFRESH \
-  TIMEOUT \
-  MAX_FSIZE \
-  NUM_WORKERS \
-  UNIFIER_INTERNAL_PORT \
-  ARCHSTOR_INTERNAL_PORT \
-  QREMIS_API_INTERNAL_PORT \
-  ACC_IDNEST_INTERNAL_PORT \
-  DEAD_SIMPLE_INTERFACE_INTERNAL_PORT \
-  REC_API_INTERNAL_PORT
-
+set -a
+. compose_env_vars.env
 envsubst < compose.template > docker-compose.yml
