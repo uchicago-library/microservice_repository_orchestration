@@ -48,35 +48,30 @@ $ cd microservice_repository_orchestration
 $ ./clone_repos.sh
 ```
 
-5. Edit Settings in the swarm_env_vars.env File
-     - **!! NOTE: These files are going to get sourced in later scripts. !!**
+5. Edit Settings in the vars.env File
+     - **!! NOTE: This file is going to get sourced in later scripts. !!**
 
-Use whatever editor you like, the files are plaintext. Nano example provided:
+Use whatever editor you like, the file is plaintext. Nano example provided:
 ```
-$ nano swarm_env_vars.env
-```
-
-6. Build/Insert the Configuration Files
-```
-$ ./build_swarm_configs.sh
+$ nano vars.env
 ```
 
-7. Build the YML for Docker Compose
+6. Build the YML for Docker Compose
 ```
 $ ./build_swarm_yml.sh
 ```
 
-8. Build the Container Images
+7. Build the Container Images
 ```
 $ docker-compose -f swarm_stack.yml build
 ```
 
-9. Push the Built Images to the Docker Repository
+8. Push the Built Images to the Docker Repository
 ```
 $ docker-compose -f swarm_stack.yml push
 ```
 
-10. Deploy the Services to the Swarm
+9. Deploy the Services to the Swarm
 ```
 $ docker stack deploy --compose-file swarm_stack.yml repository_swarm
 ```
@@ -103,25 +98,20 @@ $ cd microservice_repository_orchestration
 $ ./clone_repos.sh
 ```
 
-4. Edit Settings in the compose_env_vars.env File
-    - **!! NOTE: These files are going to get sourced in later scripts. !!**
+4. Edit Settings in the vars.env File
+    - **!! NOTE: This file is going to get sourced in later scripts. !!**
 
-Use whatever editor you like, the files are plaintext. Nano example provided:
+Use whatever editor you like, the file is plaintext. Nano example provided:
 ```
-$ nano compose_env_vars.env
-```
-
-5. Build/Insert the Configuration Files
-```
-$ ./build_compose_configs.sh
+$ nano vars.env
 ```
 
-6. Build the YML for Docker Compose
+5. Build the YML for Docker Compose
 ```
 $ ./build_compose_yml.sh
 ```
 
-7. Build the Container Images
+6. Build the Container Images
 ```
 $ docker-compose -f docker-compose.yml build
 ```

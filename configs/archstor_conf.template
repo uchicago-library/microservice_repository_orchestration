@@ -1,2 +1,0 @@
-STORAGE_BACKEND="mongo"
-MONGO_HOST="archstor_mongo"
