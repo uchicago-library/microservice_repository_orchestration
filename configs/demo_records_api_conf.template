@@ -1,3 +1,0 @@
-MONGO_HOST="rec_mongo"
-MONGO_PORT=27017
-MONGO_DB="recs"

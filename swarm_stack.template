@@ -1,0 +1,138 @@
+version: "3.0"
+# NOTE: This swarm config defines mongo/redis instances for storage
+# _inside of the swarm itself_ with no specified volumes. aka none of this
+# data is actually persistent. It also includes nearly all of the options
+# for supported storage backends from the various projects.
+services:
+    archstor_mongo:
+        image: "mongo"
+    rec_mongo:
+        image: "mongo"
+    acc_idnest_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    qremis_api_redis:
+        image: "redis"
+        entrypoint: "redis-server --appendonly yes"
+    records_api:
+        image: ${REGISTRY-127.0.0.1:5000}/records_api:${TAG-latest}
+        build:
+            context: ./demo_records_api/
+            args:
+                PORT: "${REC_API_INTERNAL_PORT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${REC_API_SECRET_KEY}"
+                VERBOSITY: "${REC_API_VERBOSITY}"
+                MONGO_HOST: "rec_mongo"
+                MONGO_PORT: "27017"
+                MONGO_DB: "${REC_API_MONGO_DB}"
+        depends_on:
+            - rec_mongo
+        ports: 
+            - "${REC_API_EXTERNAL_PORT}:${REC_API_INTERNAL_PORT}"
+    dead_simple_interface:
+        image: ${REGISTRY-127.0.0.1:5000}/dead_simple_interface:${TAG-latest}
+        build:
+            context: ./microservice_repository_dead_simple_interface/
+            args:
+                PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${DEAD_SIMPLE_INTERFACE_SECRET_KEY}"
+                VERBOSITY: "${DEAD_SIMPLE_INTERFACE_VERBOSITY}"
+                INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
+                INTERNAL_QREMIS_API_URL: "http://qremis_api:${QREMIS_API_INTERNAL_PORT}/"
+                INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
+                EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
+                EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
+        ports: 
+            - "${DEAD_SIMPLE_INTERFACE_EXTERNAL_PORT}:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+    archstor:
+        image: ${REGISTRY-127.0.0.1:5000}/archstor:${TAG-latest}
+        build:
+            context: ./archstor/
+            args:
+                PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${ARCHSTOR_SECRET_KEY}"
+                VERBOSITY: "${ARCHSTOR_VERBOSITY}"
+                STORAGE_BACKEND: "${ARCHSTOR_STORAGE_BACKEND}"
+                MONGO_HOST: "archstor_mongo"
+                MONGO_PORT: "27017"
+                MONGO_DB: "${ARCHSTOR_MONGO_DB}"
+                SWIFT_AUTH_URL: "${ARCHSTOR_SWIFT_AUTH_URL}"
+                SWIFT_AUTH_VERSION: "${ARCHSTOR_SWIFT_AUTH_VERSION}"
+                SWIFT_USER: "${ARCHSTOR_SWIFT_USER}"
+                SWIFT_KEY: "${ARCHSTOR_SWIFT_KEY}"
+                SWIFT_TENANT_NAME: "${ARCHSTOR_SWIFT_TENANT_NAME}"
+                SWIFT_CONTAINER_NAME: "${ARCHSTOR_SWIFT_CONTAINER_NAME}"
+                SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
+        depends_on:
+            - archstor_mongo
+        ports: 
+            - "${ARCHSTOR_EXTERNAL_PORT}:${ARCHSTOR_INTERNAL_PORT}"
+    acc_idnest:
+        image: ${REGISTRY-127.0.0.1:5000}/acc_idnest:${TAG-latest}
+        build:
+            context: ./idnest/
+            args:
+                PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
+                VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
+                STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"
+                MONGO_HOST: "${ACC_IDNEST_MONGO_HOST}"
+                MONGO_PORT: "${ACC_IDNEST_MONGO_PORT}"
+                MONGO_DB: "${ACC_IDNEST_MONGO_DB}"
+                REDIS_HOST: "acc_idnest_redis"
+                REDIS_PORT: "6379"
+                REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
+        depends_on:
+            - acc_idnest_redis
+        ports: 
+            - "${ACC_IDNEST_EXTERNAL_PORT}:${ACC_IDNEST_INTERNAL_PORT}"
+    qremis_api:
+        image: ${REGISTRY-127.0.0.1:5000}/qremis_api:${TAG-latest}
+        build:
+            context: ./qremis_api/
+            args:
+                PORT: "${QREMIS_API_INTERNAL_PORT}"
+                WORKERS: "${GUNICORN_NUM_WORKERS}"
+                TIMEOUT: "${GUNICORN_TIMEOUT}"
+                SECRET_KEY: "${QREMIS_API_SECRET_KEY}"
+                VERBOSITY: "${QREMIS_API_VERBOSITY}"
+                STORAGE_BACKEND: "${QREMIS_API_STORAGE_BACKEND}"
+                MONGO_HOST: "${QREMIS_API_MONGO_HOST}"
+                MONGO_PORT: "${QREMIS_API_MONGO_PORT}"
+                MONGO_DBNAME: "${QREMIS_API_MONGO_DBNAME}"
+                REDIS_HOST: "qremis_api_redis"
+                REDIS_PORT: "6379"
+                REDIS_DB: "${QREMIS_API_REDIS_DB}"
+        ports: 
+            - "${QREMIS_API_EXTERNAL_PORT}:${QREMIS_API_INTERNAL_PORT}"
+        depends_on:
+            - qremis_api_redis
+    unifier:
+        image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
+        build:
+            context: ./unifier/
+            args:
+                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
+                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
+                LISTEN: "${UNIFIER_EXTERNAL_PORT}"
+                REFRESH: "${UNIFIER_REFRESH}"
+                TIMEOUT: "${UNIFIER_TIMEOUT}"
+                MAX_FSIZE: "${UNIFIER_MAX_FSIZE}"
+        depends_on:
+            - archstor
+            - qremis_api
+            - acc_idnest
+            - records_api
+        ports: 
+            - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
