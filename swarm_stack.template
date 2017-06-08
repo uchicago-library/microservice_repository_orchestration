@@ -26,7 +26,7 @@ services:
                 VERBOSITY: "${REC_API_VERBOSITY}"
                 MONGO_HOST: "rec_mongo"
                 MONGO_PORT: "27017"
-                MONGO_DB: "${REC_MONGO_DB}"
+                MONGO_DB: "${REC_API_MONGO_DB}"
         depends_on:
             - rec_mongo
         ports: 
@@ -89,6 +89,7 @@ services:
                 MONGO_DB: "${ACC_IDNEST_MONGO_DB}"
                 REDIS_HOST: "acc_idnest_redis"
                 REDIS_PORT: "6379"
+                REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
         depends_on:
             - acc_idnest_redis
         ports: 
