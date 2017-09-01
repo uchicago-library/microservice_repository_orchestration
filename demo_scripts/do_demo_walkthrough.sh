@@ -43,7 +43,7 @@ read
 
 # Create manager nodes
 echo "$EXPLANATORY About to create the manager nodes"
-echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 1gb create manager\$x"
+echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 2gb create manager\$x"
 echo "$EXPLANATORY Hit Enter to Execute the Command for each Manager"
 read
 echo "$EXPLANATORY Creating $managers manager machines ...";
@@ -53,7 +53,7 @@ do
 	docker-machine create \
             -d digitalocean \
             --digitalocean-access-token=$DIGITALOCEAN_ACCESS_TOKEN \
-            --digitalocean-size 1gb \
+            --digitalocean-size 2gb \
             manager$node;
 done
 echo "$EXPLANATORY Managers created!"
@@ -63,7 +63,7 @@ read
 
 # Create the worker nodes
 echo "$EXPLANATORY About to create the worker nodes"
-echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 1gb create worker\$x"
+echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 2gb create worker\$x"
 echo "$EXPLANATORY Hit Enter to Execute the Command for each Worker"
 read
 echo "$EXPLANATORY Creating $workers worker machines ...";
@@ -73,7 +73,7 @@ do
 	docker-machine create \
             -d digitalocean \
             --digitalocean-access-token=$DIGITALOCEAN_ACCESS_TOKEN \
-            --digitalocean-size 1gb \
+            --digitalocean-size 2gb \
             worker$node;
 done
 echo "$EXPLANATORY Workers created!"
