@@ -4,7 +4,7 @@ set -e
 # Note: Sometimes DO can die while provisioning DO
 # instances, see: https://github.com/docker/machine/issues/3358
 # Set some vars
-managers=3
+managers=1
 workers=2
 # Check to be sure we have a token
 : "${DIGITALOCEAN_ACCESS_TOKEN:?Must supply a Digital Ocean token in the DIGITALOCEAN_ACCESS_TOKEN env variable}"
@@ -57,12 +57,13 @@ docker-machine ssh ni-manager1 "docker service create --name registry --publish 
 docker-machine ssh ni-manager1 "git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git"
 # Download orchestration repo requirements
 docker-machine ssh ni-manager1 "cd microservice_repository_orchestration/ && curl -L --fail https://github.com/docker/compose/releases/download/1.13.0/run.sh > docker-compose && chmod +x docker-compose"
+docker-machine ssh manager1 "tce-load -wi gettext.tcz"
 # Repo clone script
-docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && bash clone_repos.sh"
+docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && sh clone_repos.sh"
 # Alter config file
 docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && mv vars.env vars.env.old && cat vars.env.old | sed 's/SWARM_HOST=.*$/SWARM_HOST=http:\/\/$(docker-machine ip ni-manager1)/' > vars.env"
 # Build yml
-docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && bash build_swarm_yml.sh"
+docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && sh build_swarm_yml.sh"
 # Build Images
 docker-machine ssh ni-manager1 "cd microservice_repository_orchestration && ./docker-compose -f swarm_stack.yml build"
 # Push

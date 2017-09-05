@@ -77,9 +77,6 @@ services:
         build:
             context: ./idnest/
             args:
-                PORT: "${ACC_IDNEST_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
                 VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
                 STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"

@@ -5,34 +5,18 @@ set -e
 
 # Swarm microservice repository demo
 
-# Note: Sometimes DO can die while provisioning DO
-# instances, see: https://github.com/docker/machine/issues/3358
-
-
 # Set some vars
-managers=3
-workers=3
+managers=1
+workers=2
 EXPLANATORY="======>"
-
-
-# Check to be sure we have a token
-
-: "${DIGITALOCEAN_ACCESS_TOKEN:?Must supply a Digital Ocean token in the DIGITALOCEAN_ACCESS_TOKEN env variable}"
 
 
 # Intro
 echo "$EXPLANATORY First things first, lets build our swarm."
-echo "$EXPLANATORY This demo builds a swarm from VMs in digital ocean "
+echo "$EXPLANATORY This demo builds a swarm from VMs "
 echo "$EXPLANATORY utilizing docker-machine. If you "
-echo "$EXPLANATORY don't have docker-machine installed and a "
-echo "$EXPLANATORY DO account, hit Ctrl+C now."
-echo "$EXPLANATORY Open the DO web droplet interface to watch"
-echo "$EXPLANATORY machines come in real time (hit f5)"
-echo "$EXPLANATORY https://cloud.digitalocean.com/droplets"
-echo "$EXPLANATORY "
-echo "$EXPLANATORY RUNNING THIS DEMO INCURS DIGITAL OCEAN "
-echo "$EXPLANATORY COSTS, YOU'VE BEEN WARNED!"
-echo "$EXPLANATORY Hit Enter to Continue"
+echo "$EXPLANATORY don't have docker-machine installed, "
+echo "$EXPLANATORY hit Ctrl+C now and install it."
 read
 
 
@@ -43,7 +27,7 @@ read
 
 # Create manager nodes
 echo "$EXPLANATORY About to create the manager nodes"
-echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 2gb create manager\$x"
+echo "$EXPLANATORY $ docker-machine create manager\$x"
 echo "$EXPLANATORY Hit Enter to Execute the Command for each Manager"
 read
 echo "$EXPLANATORY Creating $managers manager machines ...";
@@ -51,9 +35,6 @@ for node in $(seq 1 $managers);
 do
 	echo "$EXPLANATORY Creating manager$node machine ...";
 	docker-machine create \
-            -d digitalocean \
-            --digitalocean-access-token=$DIGITALOCEAN_ACCESS_TOKEN \
-            --digitalocean-size 2gb \
             manager$node;
 done
 echo "$EXPLANATORY Managers created!"
@@ -63,7 +44,7 @@ read
 
 # Create the worker nodes
 echo "$EXPLANATORY About to create the worker nodes"
-echo "$EXPLANATORY $ docker-machine -d digitalocean --digitalocean-access-token=\$DIGITALOCEAN_ACCESS_TOKEN --digitalocean-size 2gb create worker\$x"
+echo "$EXPLANATORY $ docker-machine create worker\$x"
 echo "$EXPLANATORY Hit Enter to Execute the Command for each Worker"
 read
 echo "$EXPLANATORY Creating $workers worker machines ...";
@@ -71,9 +52,6 @@ for node in $(seq 1 $workers);
 do
 	echo "$EXPLANATORY Creating worker$node machine ...";
 	docker-machine create \
-            -d digitalocean \
-            --digitalocean-access-token=$DIGITALOCEAN_ACCESS_TOKEN \
-            --digitalocean-size 2gb \
             worker$node;
 done
 echo "$EXPLANATORY Workers created!"
