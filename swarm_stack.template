@@ -4,6 +4,7 @@ version: "3.0"
 # data is actually persistent. It also includes nearly all of the options
 # for supported storage backends from the various projects.
 services:
+    # Redis/Mongo Instances
     archstor_mongo:
         image: "mongo"
     rec_mongo:
@@ -14,19 +15,19 @@ services:
     qremis_api_redis:
         image: "redis"
         entrypoint: "redis-server --appendonly yes"
+    # Swarm Services
     records_api:
         image: ${REGISTRY-127.0.0.1:5000}/records_api:${TAG-latest}
         build:
             context: ./demo_records_api/
             args:
-                PORT: "${REC_API_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${REC_API_SECRET_KEY}"
                 VERBOSITY: "${REC_API_VERBOSITY}"
                 MONGO_HOST: "rec_mongo"
                 MONGO_PORT: "27017"
                 MONGO_DB: "${REC_API_MONGO_DB}"
+        environment:
+            NGINX_PORT: "${REC_API_INTERNAL_PORT}"
         depends_on:
             - rec_mongo
         ports: 
@@ -36,9 +37,6 @@ services:
         build:
             context: ./microservice_repository_dead_simple_interface/
             args:
-                PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${DEAD_SIMPLE_INTERFACE_SECRET_KEY}"
                 VERBOSITY: "${DEAD_SIMPLE_INTERFACE_VERBOSITY}"
                 INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
@@ -46,6 +44,8 @@ services:
                 INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
                 EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
                 EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
+        environment:
+            NGINX_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
         ports: 
             - "${DEAD_SIMPLE_INTERFACE_EXTERNAL_PORT}:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
     archstor:
@@ -53,9 +53,6 @@ services:
         build:
             context: ./archstor/
             args:
-                PORT: "${ARCHSTOR_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${ARCHSTOR_SECRET_KEY}"
                 VERBOSITY: "${ARCHSTOR_VERBOSITY}"
                 STORAGE_BACKEND: "${ARCHSTOR_STORAGE_BACKEND}"
@@ -71,6 +68,8 @@ services:
                 SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
         depends_on:
             - archstor_mongo
+        environment:
+            NGINX_PORT: "${ARCHSTOR_INTERNAL_PORT}"
         ports: 
             - "${ARCHSTOR_EXTERNAL_PORT}:${ARCHSTOR_INTERNAL_PORT}"
     acc_idnest:
@@ -78,9 +77,6 @@ services:
         build:
             context: ./idnest/
             args:
-                PORT: "${ACC_IDNEST_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
                 VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
                 STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"
@@ -92,6 +88,8 @@ services:
                 REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
         depends_on:
             - acc_idnest_redis
+        environment:
+            NGINX_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
         ports: 
             - "${ACC_IDNEST_EXTERNAL_PORT}:${ACC_IDNEST_INTERNAL_PORT}"
     qremis_api:
@@ -99,9 +97,6 @@ services:
         build:
             context: ./qremis_api/
             args:
-                PORT: "${QREMIS_API_INTERNAL_PORT}"
-                WORKERS: "${GUNICORN_NUM_WORKERS}"
-                TIMEOUT: "${GUNICORN_TIMEOUT}"
                 SECRET_KEY: "${QREMIS_API_SECRET_KEY}"
                 VERBOSITY: "${QREMIS_API_VERBOSITY}"
                 STORAGE_BACKEND: "${QREMIS_API_STORAGE_BACKEND}"
@@ -111,10 +106,12 @@ services:
                 REDIS_HOST: "qremis_api_redis"
                 REDIS_PORT: "6379"
                 REDIS_DB: "${QREMIS_API_REDIS_DB}"
-        ports: 
-            - "${QREMIS_API_EXTERNAL_PORT}:${QREMIS_API_INTERNAL_PORT}"
         depends_on:
             - qremis_api_redis
+        environment:
+            NGINX_PORT: "${QREMIS_API_INTERNAL_PORT}"
+        ports: 
+            - "${QREMIS_API_EXTERNAL_PORT}:${QREMIS_API_INTERNAL_PORT}"
     unifier:
         image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
         build:
