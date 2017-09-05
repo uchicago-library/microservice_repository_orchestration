@@ -42,8 +42,8 @@ services:
                 INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
                 INTERNAL_QREMIS_API_URL: "http://qremis_api:${QREMIS_API_INTERNAL_PORT}/"
                 INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
-                EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
-                EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
+                EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/"
+                EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/"
         environment:
             NGINX_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
         ports: 
