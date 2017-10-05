@@ -1,0 +1,13 @@
+#!/bin/bash
+# Pulling other repositories...
+./clone_repos.sh
+# Building compose...
+bash build_compose_yml.sh
+# Running the compose...
+docker-compose up -d
+# Checking endpoints...
+for x in / /archstor /qremis_api /collrecs /acc_idnest; do
+    echo $x
+    response=$(curl --write-out %{http_code} --silent --output /dev/null localhost$x) 
+    if [[ $response -ne 200 ]]; then echo "$response" && exit 1; fi || exit 1;
+done
