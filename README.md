@@ -1,5 +1,7 @@
 This repository contains the necessary files to spin up the core microservices for an archival digital repository.
 
+[![Build Status](https://travis-ci.org/bnbalsamo/microservice_repository_orchestration.svg?branch=master)](https://travis-ci.org/bnbalsamo/microservice_repository_orchestration)
+
 These microservices are still in varying stages of development, changes may occur without warning.
 
 It relies on the following projects:
