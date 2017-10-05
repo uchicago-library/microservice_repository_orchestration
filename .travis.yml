@@ -1,5 +1,5 @@
 sudo: required
 language: bash
-script: time bash test.sh
+script: time ./test.sh
 services:
     - docker
