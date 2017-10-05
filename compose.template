@@ -19,97 +19,92 @@ services:
     brecords_api:
         build:
             context: ./demo_records_api/
-            args:
-                SECRET_KEY: "${REC_API_SECRET_KEY}"
-                VERBOSITY: "${REC_API_VERBOSITY}"
-                MONGO_HOST: "rec_mongo"
-                MONGO_PORT: "27017"
-                MONGO_DB: "${REC_API_MONGO_DB}"
         environment:
             NGINX_PORT: "${REC_API_INTERNAL_PORT}"
+            REC_API_SECRET_KEY: "${REC_API_SECRET_KEY}"
+            REC_API_VERBOSITY: "${REC_API_VERBOSITY}"
+            REC_API_MONGO_HOST: "rec_mongo"
+            REC_API_MONGO_PORT: "27017"
+            REC_API_MONGO_DB: "${REC_API_MONGO_DB}"
         depends_on:
             - rec_mongo
     bdead_simple_interface:
         build:
             context: ./microservice_repository_dead_simple_interface/
-            args:
-                SECRET_KEY: "${DEAD_SIMPLE_INTERFACE_SECRET_KEY}"
-                VERBOSITY: "${DEAD_SIMPLE_INTERFACE_VERBOSITY}"
-                INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
-                INTERNAL_QREMIS_API_URL: "http://qremis_api:${QREMIS_API_INTERNAL_PORT}/"
-                INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
-                EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
-                EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
         environment:
             NGINX_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+            DEAD_SIMPLE_INTERFACE_SECRET_KEY: "${DEAD_SIMPLE_INTERFACE_SECRET_KEY}"
+            DEAD_SIMPLE_INTERFACE_VERBOSITY: "${DEAD_SIMPLE_INTERFACE_VERBOSITY}"
+            DEAD_SIMPLE_INTERFACE_INTERNAL_ACC_IDNEST_URL: "http://acc_idnest:${ACC_IDNEST_INTERNAL_PORT}/"
+            DEAD_SIMPLE_INTERFACE_INTERNAL_QREMIS_API_URL: "http://qremis_api:${QREMIS_API_INTERNAL_PORT}/"
+            DEAD_SIMPLE_INTERFACE_INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
+            DEAD_SIMPLE_INTERFACE_EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/v0/"
+            DEAD_SIMPLE_INTERFACE_EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/v0/"
     barchstor:
         build:
             context: ./archstor/
-            args:
-                SECRET_KEY: "${ARCHSTOR_SECRET_KEY}"
-                VERBOSITY: "${ARCHSTOR_VERBOSITY}"
-                STORAGE_BACKEND: "${ARCHSTOR_STORAGE_BACKEND}"
-                MONGO_HOST: "archstor_mongo"
-                MONGO_PORT: "27017"
-                MONGO_DB: "${ARCHSTOR_MONGO_DB}"
-                SWIFT_AUTH_URL: "${ARCHSTOR_SWIFT_AUTH_URL}"
-                SWIFT_AUTH_VERSION: "${ARCHSTOR_SWIFT_AUTH_VERSION}"
-                SWIFT_USER: "${ARCHSTOR_SWIFT_USER}"
-                SWIFT_KEY: "${ARCHSTOR_SWIFT_KEY}"
-                SWIFT_TENANT_NAME: "${ARCHSTOR_SWIFT_TENANT_NAME}"
-                SWIFT_CONTAINER_NAME: "${ARCHSTOR_SWIFT_CONTAINER_NAME}"
-                SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
         environment:
             NGINX_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+            ARCHSTOR_SECRET_KEY: "${ARCHSTOR_SECRET_KEY}"
+            ARCHSTOR_VERBOSITY: "${ARCHSTOR_VERBOSITY}"
+            ARCHSTOR_STORAGE_BACKEND: "${ARCHSTOR_STORAGE_BACKEND}"
+            ARCHSTOR_MONGO_HOST: "archstor_mongo"
+            ARCHSTOR_MONGO_PORT: "27017"
+            ARCHSTOR_MONGO_DB: "${ARCHSTOR_MONGO_DB}"
+            ARCHSTOR_SWIFT_AUTH_URL: "${ARCHSTOR_SWIFT_AUTH_URL}"
+            ARCHSTOR_SWIFT_AUTH_VERSION: "${ARCHSTOR_SWIFT_AUTH_VERSION}"
+            ARCHSTOR_SWIFT_USER: "${ARCHSTOR_SWIFT_USER}"
+            ARCHSTOR_SWIFT_KEY: "${ARCHSTOR_SWIFT_KEY}"
+            ARCHSTOR_SWIFT_TENANT_NAME: "${ARCHSTOR_SWIFT_TENANT_NAME}"
+            ARCHSTOR_SWIFT_CONTAINER_NAME: "${ARCHSTOR_SWIFT_CONTAINER_NAME}"
+            ARCHSTOR_SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
         depends_on:
             - archstor_mongo
     bacc_idnest:
         build:
             context: ./idnest/
-            args:
-                SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
-                VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
-                STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"
-                MONGO_HOST: "${ACC_IDNEST_MONGO_HOST}"
-                MONGO_PORT: "${ACC_IDNEST_MONGO_PORT}"
-                MONGO_DB: "${ACC_IDNEST_MONGO_DB}"
-                REDIS_HOST: "acc_idnest_redis"
-                REDIS_PORT: "6379"
-                REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
         environment:
             NGINX_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+            IDNEST_SECRET_KEY: "${ACC_IDNEST_SECRET_KEY}"
+            IDNEST_VERBOSITY: "${ACC_IDNEST_VERBOSITY}"
+            IDNEST_STORAGE_BACKEND: "${ACC_IDNEST_STORAGE_BACKEND}"
+            IDNEST_MONGO_HOST: "${ACC_IDNEST_MONGO_HOST}"
+            IDNEST_MONGO_PORT: "${ACC_IDNEST_MONGO_PORT}"
+            IDNEST_MONGO_DB: "${ACC_IDNEST_MONGO_DB}"
+            IDNEST_REDIS_HOST: "acc_idnest_redis"
+            IDNEST_REDIS_PORT: "6379"
+            IDNEST_REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
         depends_on:
             - acc_idnest_redis
     bqremis_api:
         build:
             context: ./qremis_api/
-            args:
-                SECRET_KEY: "${QREMIS_API_SECRET_KEY}"
-                VERBOSITY: "${QREMIS_API_VERBOSITY}"
-                STORAGE_BACKEND: "${QREMIS_API_STORAGE_BACKEND}"
-                MONGO_HOST: "${QREMIS_API_MONGO_HOST}"
-                MONGO_PORT: "${QREMIS_API_MONGO_PORT}"
-                MONGO_DBNAME: "${QREMIS_API_MONGO_DBNAME}"
-                REDIS_HOST: "qremis_api_redis"
-                REDIS_PORT: "6379"
-                REDIS_DB: "${QREMIS_API_REDIS_DB}"
         environment:
             NGINX_PORT: "${QREMIS_API_INTERNAL_PORT}"
+            QREMIS_API_SECRET_KEY: "${QREMIS_API_SECRET_KEY}"
+            QREMIS_API_VERBOSITY: "${QREMIS_API_VERBOSITY}"
+            QREMIS_API_STORAGE_BACKEND: "${QREMIS_API_STORAGE_BACKEND}"
+            QREMIS_API_MONGO_HOST: "${QREMIS_API_MONGO_HOST}"
+            QREMIS_API_MONGO_PORT: "${QREMIS_API_MONGO_PORT}"
+            QREMIS_API_MONGO_DBNAME: "${QREMIS_API_MONGO_DBNAME}"
+            QREMIS_API_REDIS_HOST: "qremis_api_redis"
+            QREMIS_API_REDIS_PORT: "6379"
+            QREMIS_API_REDIS_DB: "${QREMIS_API_REDIS_DB}"
         depends_on:
             - qremis_api_redis
     bunifier:
         build:
             context: ./unifier/
-            args:
-                ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
-                QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
-                ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
-                DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
-                LISTEN: "${UNIFIER_EXTERNAL_PORT}"
-                REFRESH: "${UNIFIER_REFRESH}"
-                TIMEOUT: "${UNIFIER_TIMEOUT}"
-                MAX_FSIZE: "${UNIFIER_MAX_FSIZE}"
+        environment:
+            ARCHSTOR_INTERNAL_PORT: "${ARCHSTOR_INTERNAL_PORT}"
+            QREMIS_API_INTERNAL_PORT: "${QREMIS_API_INTERNAL_PORT}"
+            ACC_IDNEST_INTERNAL_PORT: "${ACC_IDNEST_INTERNAL_PORT}"
+            DEAD_SIMPLE_INTERFACE_INTERNAL_PORT: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+            REC_API_INTERNAL_PORT: "${REC_API_INTERNAL_PORT}"
+            LISTEN: "${UNIFIER_EXTERNAL_PORT}"
+            REFRESH: "${UNIFIER_REFRESH}"
+            TIMEOUT: "${UNIFIER_TIMEOUT}"
+            MAX_FSIZE: "${UNIFIER_MAX_FSIZE}"
         depends_on:
             - archstor
             - qremis_api
@@ -118,67 +113,67 @@ services:
     archstor:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://barchstor:${ARCHSTOR_INTERNAL_PORT}"
-                LISTEN: "${ARCHSTOR_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://barchstor:${ARCHSTOR_INTERNAL_PORT}"
+            LISTEN: "${ARCHSTOR_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - barchstor
     acc_idnest:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://bacc_idnest:${ACC_IDNEST_INTERNAL_PORT}"
-                LISTEN: "${ACC_IDNEST_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://bacc_idnest:${ACC_IDNEST_INTERNAL_PORT}"
+            LISTEN: "${ACC_IDNEST_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bacc_idnest
     qremis_api:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://bqremis_api:${QREMIS_API_INTERNAL_PORT}"
-                LISTEN: "${QREMIS_API_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://bqremis_api:${QREMIS_API_INTERNAL_PORT}"
+            LISTEN: "${QREMIS_API_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bqremis_api
     dead_simple_interface:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://bdead_simple_interface:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                LISTEN: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://bdead_simple_interface:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+            LISTEN: "${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - bdead_simple_interface
     records_api:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://brecords_api:${REC_API_INTERNAL_PORT}"
-                LISTEN: "${REC_API_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://brecords_api:${REC_API_INTERNAL_PORT}"
+            LISTEN: "${REC_API_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         depends_on:
             - brecords_api
     unifier:
         build:
             context: ./loadbalancer/
-            args:
-                UPSTREAM: "http://bunifier:${UNIFIER_INTERNAL_PORT}"
-                LISTEN: "${UNIFIER_INTERNAL_PORT}"
-                REFRESH: "${NGINX_REFRESH}"
-                TIMEOUT: "${NGINX_TIMEOUT}"
-                MAX_FSIZE: "${NGINX_MAX_FSIZE}"
+        environment:
+            UPSTREAM: "http://bunifier:${UNIFIER_INTERNAL_PORT}"
+            LISTEN: "${UNIFIER_INTERNAL_PORT}"
+            REFRESH: "${NGINX_REFRESH}"
+            TIMEOUT: "${NGINX_TIMEOUT}"
+            MAX_FSIZE: "${NGINX_MAX_FSIZE}"
         ports: 
             - "${UNIFIER_EXTERNAL_PORT}:${UNIFIER_INTERNAL_PORT}"
         depends_on:
