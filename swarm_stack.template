@@ -29,8 +29,6 @@ services:
             REC_API_MONGO_DB: "${REC_API_MONGO_DB}"
         depends_on:
             - rec_mongo
-        ports: 
-            - "${REC_API_EXTERNAL_PORT}:${REC_API_INTERNAL_PORT}"
     dead_simple_interface:
         image: ${REGISTRY-127.0.0.1:5000}/dead_simple_interface:${TAG-latest}
         build:
@@ -44,8 +42,6 @@ services:
             DEAD_SIMPLE_INTERFACE_INTERNAL_RECS_API_URL: "http://records_api:${REC_API_INTERNAL_PORT}/"
             DEAD_SIMPLE_INTERFACE_EXTERNAL_ARCHSTOR_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/archstor/"
             DEAD_SIMPLE_INTERFACE_EXTERNAL_QREMIS_API_URL: "${SWARM_HOST}:${UNIFIER_EXTERNAL_PORT}/qremis_api/"
-        ports: 
-            - "${DEAD_SIMPLE_INTERFACE_EXTERNAL_PORT}:${DEAD_SIMPLE_INTERFACE_INTERNAL_PORT}"
     archstor:
         image: ${REGISTRY-127.0.0.1:5000}/archstor:${TAG-latest}
         build:
@@ -67,8 +63,6 @@ services:
             ARCHSTOR_SWIFT_TENANT_NAME: "${ARCHSTOR_SWIFT_TENANT_NAME}"
             ARCHSTOR_SWIFT_CONTAINER_NAME: "${ARCHSTOR_SWIFT_CONTAINER_NAME}"
             ARCHSTOR_SWIFT_SECRET_KEY: "${ARCHSTOR_SWIFT_SECRET_KEY}"
-        ports: 
-            - "${ARCHSTOR_EXTERNAL_PORT}:${ARCHSTOR_INTERNAL_PORT}"
     acc_idnest:
         image: ${REGISTRY-127.0.0.1:5000}/acc_idnest:${TAG-latest}
         build:
@@ -86,8 +80,6 @@ services:
             IDNEST_REDIS_HOST: "acc_idnest_redis"
             IDNEST_REDIS_PORT: "6379"
             IDNEST_REDIS_DB: "${ACC_IDNEST_REDIS_DB}"
-        ports: 
-            - "${ACC_IDNEST_EXTERNAL_PORT}:${ACC_IDNEST_INTERNAL_PORT}"
     qremis_api:
         image: ${REGISTRY-127.0.0.1:5000}/qremis_api:${TAG-latest}
         build:
@@ -105,8 +97,6 @@ services:
             QREMIS_API_REDIS_HOST: "qremis_api_redis"
             QREMIS_API_REDIS_PORT: "6379"
             QREMIS_API_REDIS_DB: "${QREMIS_API_REDIS_DB}"
-        ports: 
-            - "${QREMIS_API_EXTERNAL_PORT}:${QREMIS_API_INTERNAL_PORT}"
     unifier:
         image: ${REGISTRY-127.0.0.1:5000}/unifier:${TAG-latest}
         build:
