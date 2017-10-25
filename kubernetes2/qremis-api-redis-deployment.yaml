@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: qremis-api-redis
+  name: qremis-api-redis
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: qremis-api-redis
+    spec:
+      containers:
+      - command:
+        - redis-server
+        - --appendonly
+        - "yes"
+        image: redis
+        name: qremis-api-redis
+        resources: {}
+      restartPolicy: Always
+status: {}

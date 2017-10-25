@@ -9,10 +9,11 @@ metadata:
     io.kompose.service: dead-simple-interface
   name: dead-simple-interface
 spec:
+  type: NodePort
   ports:
   - name: "8084"
     port: 8084
-    targetPort: 8084
+#    targetPort: 8084
   selector:
     io.kompose.service: dead-simple-interface
 status:

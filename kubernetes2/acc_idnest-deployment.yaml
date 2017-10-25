@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: acc-idnest
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: acc-idnest
+    spec:
+      containers:
+      - image: bnbalsamo/kube-idnest
+        name: acc-idnest
+        env:
+        - name: GUNICORN_SOCKET_LOCATION
+          value: /share/acc-idnest.sock
+        - name: IDNEST_SECRET_KEY
+          value: changme-b63f9905e6b842aea1603cc077c2d134
+        - name: IDNEST_STORAGE_BACKEND
+          value: redis
+        - name: IDNEST_REDIS_HOST
+          value: acc-idnest-redis
+        - name: IDNEST_REDIS_DB
+          value: "0"
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      - image: bnbalsamo/nginx_wsgi_passthrough
+        name: serve-sidecar
+        ports:
+        - containerPort: 80
+        env:
+        - name: NGINX_SOCKET_LOCATION
+          value: /share/acc-idnest.sock
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      volumes:
+      - name: share-volume
+        emptyDir: {}

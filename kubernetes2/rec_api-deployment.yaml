@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rec-api
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: rec-api
+    spec:
+      containers:
+      - image: bnbalsamo/kube-records_api
+        name: rec-api
+        env:
+        - name: GUNICORN_SOCKET_LOCATION
+          value: /share/recapi.sock
+        - name: REC_API_SECRET_KEY
+          value: changme-b63f9905e6b842aea1603cc077c2d133
+        - name: REC_API_MONGO_HOST
+          value: rec-mongo
+        - name: REC_API_MONGO_DB
+          value: recs
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      - image: bnbalsamo/nginx_wsgi_passthrough
+        name: serve-sidecar
+        ports:
+        - containerPort: 80
+        env:
+        - name: NGINX_SOCKET_LOCATION
+          value: /share/recapi.sock
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      volumes:
+      - name: share-volume
+        emptyDir: {}
