@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f swarm_stack.yml
+    kompose.version: 1.2.0 (99f88ef)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: qremis-api
+  name: qremis-api
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: qremis-api
+    spec:
+      containers:
+      - env:
+        - name: NGINX_PORT
+          value: "8082"
+        - name: QREMIS_API_MONGO_DBNAME
+        - name: QREMIS_API_MONGO_HOST
+        - name: QREMIS_API_MONGO_PORT
+        - name: QREMIS_API_REDIS_DB
+          value: "0"
+        - name: QREMIS_API_REDIS_HOST
+          value: qremis-api-redis
+        - name: QREMIS_API_REDIS_PORT
+          value: "6379"
+        - name: QREMIS_API_SECRET_KEY
+          value: changeme-9420ed6eda104de6a76510635313eabe
+        - name: QREMIS_API_STORAGE_BACKEND
+          value: redis
+        - name: QREMIS_API_VERBOSITY
+          value: WARN
+        image: qremis_api:latest
+        name: qremis-api
+        ports:
+        - containerPort: 8082
+        resources: {}
+        imagePullPolicy: Never
+      restartPolicy: Always
+status: {}

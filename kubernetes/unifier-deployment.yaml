@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f swarm_stack.yml
+    kompose.version: 1.2.0 (99f88ef)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: unifier
+  name: unifier
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: unifier
+    spec:
+      containers:
+      - env:
+        - name: ACC_IDNEST_INTERNAL_PORT
+          value: "8083"
+        - name: ARCHSTOR_INTERNAL_PORT
+          value: "8081"
+        - name: DEAD_SIMPLE_INTERFACE_INTERNAL_PORT
+          value: "8084"
+        - name: LISTEN
+          value: "80"
+        - name: MAX_FSIZE
+          value: 20000m
+        - name: QREMIS_API_INTERNAL_PORT
+          value: "8082"
+        - name: REC_API_INTERNAL_PORT
+          value: "8085"
+        - name: REFRESH
+          value: 30s
+        - name: TIMEOUT
+          value: "600"
+        image: unifier:latest
+        name: unifier
+        ports:
+        - containerPort: 80
+        resources: {}
+        imagePullPolicy: Never
+      restartPolicy: Always
+status: {}
