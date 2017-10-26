@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: archstor-mongo
+  name: archstor-mongo
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: archstor-mongo
+    spec:
+      containers:
+      - image: mongo
+        name: archstor-mongo
+        resources: {}
+      restartPolicy: Always
+status: {}

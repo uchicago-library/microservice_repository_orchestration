@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: qremis-api
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: qremis-api
+    spec:
+      containers:
+      - image: bnbalsamo/kube-qremis_api
+        name: qremis-api
+        env:
+        - name: GUNICORN_SOCKET_LOCATION
+          value: /share/qremis-api.sock
+        - name: QREMIS_API_SECRET_KEY
+          value: changeme-0c1e09d670de456b956952ed878aab2e
+        - name: QREMIS_API_STORAGE_BACKEND
+          value: redis
+        - name: QREMIS_API_REDIS_HOST
+          value: qremis-api-redis
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      - image: bnbalsamo/nginx_wsgi_passthrough
+        name: serve-sidecar
+        ports:
+        - containerPort: 80
+        env:
+        - name: NGINX_SOCKET_LOCATION
+          value: /share/qremis-api.sock
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      volumes:
+      - name: share-volume
+        emptyDir: {}

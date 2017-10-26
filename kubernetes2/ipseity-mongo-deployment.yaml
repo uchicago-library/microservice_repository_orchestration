@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: ipseity-mongo
+  name: ipseity-mongo
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: ipseity-mongo
+    spec:
+      containers:
+      - image: mongo
+        name: ipseity-mongo
+        resources: {}
+      restartPolicy: Always
+status: {}

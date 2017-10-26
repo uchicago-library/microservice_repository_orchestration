@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: ipseity
+  name: ipseity
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 80
+    targetPort: 80
+  selector:
+    service: ipseity
+status:
+  loadBalancer: {}

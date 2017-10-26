@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: archstor
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: archstor
+    spec:
+      containers:
+      - image: bnbalsamo/kube-archstor
+        name: archstor
+        env:
+        - name: GUNICORN_SOCKET_LOCATION
+          value: /share/archstor.sock
+        - name: ARCHSTOR_SECRET_KEY
+          value: changme-b63f9905e6b842aea1603cc077c2d133
+        - name: ARCHSTOR_STORAGE_BACKEND
+          value: mongo
+        - name: ARCHSTOR_MONGO_HOST
+          value: archstor-mongo
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      - image: bnbalsamo/nginx_wsgi_passthrough
+        name: serve-sidecar
+        ports:
+        - containerPort: 80
+        env:
+        - name: NGINX_SOCKET_LOCATION
+          value: /share/archstor.sock
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      volumes:
+      - name: share-volume
+        emptyDir: {}

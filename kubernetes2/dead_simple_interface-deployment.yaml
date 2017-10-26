@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dead-simple-interface
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: dead-simple-interface
+    spec:
+      containers:
+      - image: bnbalsamo/kube-dead_simple_interface
+        name: dead-simple-interface
+        env:
+        - name: GUNICORN_SOCKET_LOCATION
+          value: /share/dead-simple-interface.sock
+        - name: DEAD_SIMPLE_INTERFACE_EXTERNAL_ARCHSTOR_URL
+          value: http://localhost:80/archstor/
+        - name: DEAD_SIMPLE_INTERFACE_EXTERNAL_QREMIS_API_URL
+          value: http://localhost:80/qremis_api/
+        - name: DEAD_SIMPLE_INTERFACE_INTERNAL_ACC_IDNEST_URL
+          value: http://acc-idnest/
+        - name: DEAD_SIMPLE_INTERFACE_INTERNAL_QREMIS_API_URL
+          value: http://qremis-api/
+        - name: DEAD_SIMPLE_INTERFACE_INTERNAL_RECS_API_URL
+          value: http://records-api/
+        - name: DEAD_SIMPLE_INTERFACE_SECRET_KEY
+          value: changeme-123cb4c1573443c2ba1bf762c20e4723
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      - image: bnbalsamo/nginx_wsgi_passthrough
+        name: serve-sidecar
+        ports:
+        - containerPort: 80
+        env:
+        - name: NGINX_SOCKET_LOCATION
+          value: /share/dead-simple-interface.sock
+        volumeMounts:
+        - mountPath: /share
+          name: share-volume
+      volumes:
+      - name: share-volume
+        emptyDir: {}
