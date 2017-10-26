@@ -25,7 +25,7 @@ spec:
         - name: DEAD_SIMPLE_INTERFACE_INTERNAL_QREMIS_API_URL
           value: http://qremis-api/
         - name: DEAD_SIMPLE_INTERFACE_INTERNAL_RECS_API_URL
-          value: http://records-api/
+          value: http://rec-api/
         - name: DEAD_SIMPLE_INTERFACE_SECRET_KEY
           value: changeme-123cb4c1573443c2ba1bf762c20e4723
         volumeMounts:
