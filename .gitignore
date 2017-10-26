@@ -1,6 +1,6 @@
-archstor*
-idnest*
-qremis_api*
-demo_records_api*
-microservice_repository_dead_simple_interface*
-ipseity*
+archstor/*
+idnest/*
+qremis_api/*
+demo_records_api/*
+microservice_repository_dead_simple_interface/*
+ipseity/*
