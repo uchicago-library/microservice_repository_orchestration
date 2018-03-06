@@ -1,18 +1,18 @@
 This repository contains the necessary files to spin up the core microservices for an archival digital repository.
 
-[![Build Status](https://travis-ci.org/bnbalsamo/microservice_repository_orchestration.svg?branch=master)](https://travis-ci.org/bnbalsamo/microservice_repository_orchestration)
+[![Build Status](https://travis-ci.org/uchicago-library/microservice_repository_orchestration.svg?branch=master)](https://travis-ci.org/uchicago-library/microservice_repository_orchestration)
 
 These microservices are still in varying stages of development, changes may occur without warning.
 
 It relies on the following projects:
 
-- [archstor](https://github.com/bnbalsamo/archstor) for data storage
+- [archstor](https://github.com/uchicago-library/archstor) for data storage
 - [idnest](https://github.com/uchicago-library/idnest) for basic accession organization
-- [qremis_api](https://github.com/bnbalsamo/qremis_api) for managing metadata records
-- [demo_records_api](https://github.com/bnbalsamo/demo_records_api) a quick simple accession/collection records management API
-- [microservice_repository_dead_simple_interface](https://github.com/bnbalsamo/microservice_repository_dead_simple_interface) An HTTP interface to wrap the API functionalities.
+- [qremis_api](https://github.com/uchicago-library/qremis_api) for managing metadata records
+- [demo_records_api](https://github.com/uchicago-library/demo_records_api) a quick simple accession/collection records management API
+- [microservice_repository_dead_simple_interface](https://github.com/uchicago-library/microservice_repository_dead_simple_interface) An HTTP interface to wrap the API functionalities.
 
-The [accutil](https://github.com/bnbalsamo/qremis_accutil) is built to ingest files into the microservice systems.
+The [accutil](https://github.com/uchicago-library/qremis_accutil) is built to ingest files into the microservice systems.
 
 # Swarm Setup Instructions
 ## Prerequisites/Notes
@@ -37,7 +37,7 @@ $ docker service create --name registry --publish 5000:5000 registry:2
 
 2. Clone the Git Repository
 ```
-$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
+$ git clone https://github.com/uchicago-library/microservice_repository_orchestration.git
 ```
 
 3. Navigate into the Repository Root
@@ -87,7 +87,7 @@ You should now be able to navigate to $SWARM_HOST and see the interface
 
 1. Clone the Git Repository
 ```
-$ git clone https://github.com/bnbalsamo/microservice_repository_orchestration.git
+$ git clone https://github.com/uchicago-library/microservice_repository_orchestration.git
 ```
 
 2. Navigate into the Repository Root
